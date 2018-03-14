@@ -1,0 +1,342 @@
+﻿FORMAT: 1A
+HOST: https://test1.api.globalmiles.com
+
+# Global Miles Airline API
+API for Airlines
+
+# Group Flights
+
+## V1 Airline Members [/v1/airline/members/]
+
+### Recommend a New Member [POST]
+This endpoint allows to recommend a new member to airlines.
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+    + Attributes (NewMemberRequest)
+
+
++ Response 200 (application/json)
+    + Attributes (NewMemberResponse)
+
+    + Body
+
+            {
+                "status": "ok",
+                "ffp_number": "12345678902",
+                "card_type": "basic"
+            }
+
+
+
+## V1 Airline Flights Actions Status [/v1/airline/flights/actions/status]
+
+### Flight Status [POST]
+This endpoint allows to search the status of flight.
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+    + Attributes (FlightStatusRequest)
+
+
++ Response 200 (application/json)
+    + Attributes (FlightStatusResponse)
+
+    + Body
+
+            {
+                "status": "ok",
+                "flight_status": "reissued",
+                "flight": {
+                    "airline": "ZZ",
+                    "cabin_type": "economy",
+                    "flight_number": "ZZ1235",
+                    "pnr": "ZXC34E",
+                    "ticket_number": "12345678901",
+                    "departure_airport": "NYC",
+                    "arrival_airport": "CDG",
+                    "departure_date_time": "2017-11-18T22:00:00.000+03:00",
+                    "arrival_date_time": "2017-11-19T00:00:00.000+03:00",
+                    "distance": 550,
+                    "total_amount": {
+                        "currency_code": "USD",
+                        "value": 1401.99
+                    }
+                }
+            }
+
+
+
+## V1 Airline Flights [/v1/airline/flights]
+
+### Flight Creation [POST]
+This endpoint allows to create a flight on the system and defines the mileage rules for the passenger.
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+    + Attributes (FlightCreateRequest)
+
+
++ Response 200 (application/json)
+    + Attributes (Response)
+
+    + Body
+
+            {"status":"ok","message":null}
+
+
+
+## V1 Airline Members Actions Search [/v1/airline/members/actions/search]
+
+### Member Search [POST]
+This endpoint allows to search a member on the airline system.
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+    + Attributes (MemberSearchRequest)
+
+
++ Response 200 (application/json)
+    + Attributes (MemberSearchResponse)
+
+    + Body
+
+            {
+              "status": "ok",
+              "card_type": "red",
+              "base_miles": 5000,
+              "promo_miles": 100
+            }
+
+
+
+
+# Data Structures
+
+## FlightCreateRequest (object)
+
+
+### Properties
++ `award_miles_rules` (AwardMilesRules, required) - A complex object for definition of the award mile calculation logic.
++ `passenger` (PassengerMax, required) - A complex object for representing a passenger.
++ `routing_type` (enum[string], required) - Routing type of the flights.
+    + ``
+    + ``
++ `flights` (array[FlightMax], required) - An array of flights. We are expecting one flight for one way trip and two flights for round trip.
+
+
+## Response (object)
+Basic response object
+
+### Properties
++ `status` (string, required) - The status of the request. It is always 'ok' for successful responses.
++ `message` (string, optional) - The message for the unsuccessful request. It is always null for successful responses.
+
+
+## Amount (object)
+A complex object for the amount.
+
+### Properties
++ `currency_code`: `USD` (string, required) - ISO 4217 currency code of the amount.
++ `value`: `1400.99` (number, required) - A decimal value with two decimals in the string representation of amount.
+
+
+## FlightMax (object)
+
+
+### Properties
++ `airline`: `ZZ` (string, required) - IATA code for airline company.
++ `cabin_type` (string, required) - Cabin type of the flight.
++ `flight_number` (string, required) - Number of the flight.
++ `pnr` (string, required) - Passenger name record of the flight.
++ `ticket_number` (string, required) - Ticket number of the passenger.
++ `departure_airport` (string, required) - IATA code for the departure airport.
++ `arrival_airport` (string, required) - IATA code for the  arrival airport.
++ `departure_date_time` (string, required) - ISO 8601 date and time in UTC for departure time.
++ `arrival_date_time` (string, required) - ISO 8601 date and time in UTC for arrival time.
++ `total_amount` (Amount, required) - A complex object for the amount of the flight including currency and value.
++ `distance` (number, optional) - The distance between departure and arrival airports.
+
+
+## PassengerMax (object)
+A complex object for representing a passenger.
+
+### Properties
++ `first_name` (string, required) - First name of the passenger. Maximum length is 40 characters.
++ `last_name` (string, required) - Last name of the passenger. Maximum length is 40 characters.
++ `mobile` (string, required) - Mobile phone number of the passenger. It is a unique identifier for passengers in the system. The format is E.164.
++ `email` (string, required) - Email address of the passenger.
++ `language` (enum[string], optional) - The language of the passenger. Possible values are 'en' and 'tr'. Default value is 'en'.
+    + ``
+    + ``
++ `gender` (enum[string], optional) - Gender of the passenger. The possible values are 'female', 'male' or 'unknown'.
+    + `male`
+    + ``
+    + ``
++ `birthday` (string, optional) - Birthday of the passenger. The possible values are a date with YYYYMMDD formatted or null.
+
+
+## AwardMilesRules (object)
+A complex object for definition of the award mile calculation logic.
+
+### Properties
++ `award_type` (enum[string], required) - The type of the award base. The possible values are 'distance_based' and 'fair_based'.
+    + `distance_based`
+    + `fair_based`
++ `base_ratio`: `50` (number, required) - The ratio for calculating base mile from distance or fair. Possible value is an integer between 1 and 100.
++ `checkin_ratio`: `20` (number, required) - The additional mile ratio for a check-in operation. Possible value as an integer between 0 and 100.
++ `checkout_ratio`: `20` (number, required) - The additional mile ratio for a check-out operation. Possible value as an integer between 0 and 100.
++ `survey_ratio`: `20` (number, required) - The additional mile ratio for a survey. Possible value as an integer between 0 and 100.
+
+
+## MemberSearchRequest (object)
+
+
+### Properties
++ `ffp_number`: `123456789` (string, required) - FFP number of member
++ `first_name`: `JOHN` (string, required) - First name
++ `last_name`: `DOE` (string, required) - Last name
+
+
+## PassengerMin (object)
+A complex object for representing a minimal passenger information.
+
+### Properties
++ `first_name` (string, required) - First name of the passenger. Maximum length is 40 characters.
++ `last_name` (string, required) - Last name of the passenger. Maximum length is 40 characters.
++ `mobile` (string, required) - Mobile phone number of the passenger. It is a unique identifier for passengers in the system. The format is E.164.
++ `email` (string, required) - Email address of the passenger.
+
+
+## NewMemberRequest (object)
+
+
+### Properties
++ `user` (User, required) - A complex object for representing a user.
++ `flight` (FlightSimple, required) - A complex object for flight.
+
+
+## FlightMin (object)
+
+
+### Properties
++ `pnr`: `RJ2BSA` (string, required) - Passenger name record of the flight.
++ `ticket_number`: `6242174737502` (string, required) - Ticket number of the passenger.
++ `flight_number`: `ZZ1234` (string, required) - Number of the flight.
+
+
+## MemberSearchResponse (Response)
+
+
+### Properties
++ `card_type` (enum[string], required) - Type of miles card.
+    + ``
+    + ``
+    + ``
+    + ``
+    + ``
+    + ``
+    + ``
+    + ``
++ `base_miles`: `5000` (number, required) - Value of current miles.
++ `promo_miles`: `100` (number, required) - Value of status miles.
+
+
+## FlightSimple (object)
+A complex object for flight.
+
+### Properties
++ `airline` (string, required) - IATA code for airline company.
++ `pnr` (string, required) - Passenger name record of the flight.
++ `departure_date` (string, required) - ISO 8601 date for departure time.
++ `departure_airport` (string, required) - IATA code for the departure airport.
++ `arrival_airport` (string, required) - IATA code for the  arrival airport.
+
+
+## User (object)
+A complex object for representing a user.
+
+### Properties
++ `first_name` (string, required) - First name of the user. Maximum length is 40 characters.
++ `last_name` (string, required) - Last name of the user. Maximum length is 40 characters.
++ `mobile` (string, required) - Mobile phone number of the user It is a unique identifier for users in the system. The format is E.164.
++ `email` (string, required) - Email address of the user.
++ `language` (enum[string], optional) - The language of the user. Possible values are 'en' and 'tr'.
+    + ``
+    + ``
++ `gender` (enum[string], optional) - Gender of the user. The possible values are 'female', 'male' or 'unknown'.
+    + `male`
+    + ``
+    + ``
++ `birthday` (string, optional) - Birthday of the user. The possible values are a date with YYYYMMDD formatted or null.
++ `nationality` (string, optional) - Nationality
++ `national_id_number` (string, optional) - National ID Number
++ `academic_title` (string, optional) - Academic Title
++ `address` (string, optional) - Address
++ `country` (string, optional) - Country
++ `city` (string, optional) - City
++ `area` (string, optional) - State/County/Province/Region
++ `zip_code` (string, optional) - Zip Code
++ `password` (string, optional) - Password
+
+
+## FlightStatusResponse (Response)
+
+
+### Properties
++ `flight_status` (enum[string], required) - The final status of flight. The possible values are 'used', 'unused' and 'reissued'. For the reissued tickets the following new flight information must provided.
+    + ``
+    + ``
+    + ``
++ `flight` (FlightMax, required) - A complex for the flight. It is only accepted for reissued status.
+
+
+## FlightStatusRequest (object)
+
+
+### Properties
++ `passenger` (PassengerMin, required) - A complex object for representing passenger.
++ `flight` (FlightMin, required) - A complex object for flight.
+
+
+## NewMemberResponse (Response)
+
+
+### Properties
++ `ffp_number`: `12345678902` (string, optional) - Card number of frequent flyer.
++ `card_type`: `12345678902` (enum[string], optional) - Type of the miles card.
+    + ``
+    + ``
+    + ``
+    + ``
+    + ``
+    + ``
+    + ``
+    + ``
++ `need_extra_info`: `12345678902` (array, optional) - If the provided information is not enough to create a ffp member, this field can use to get new information. The possible values are language, gender, birthday, nationality, national_id_number, academic_title, address, country, city, area, zip_code, password. We will collect the additional information from user and will enhance the first request and will send it again.
+    + (enum[string])
+        + ``
+        + ``
+        + ``
+        + ``
+        + ``
+        + ``
+        + ``
+        + ``
+        + ``
+        + ``
+        + ``
+        + ``
+

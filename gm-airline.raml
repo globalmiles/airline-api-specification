@@ -1,0 +1,859 @@
+﻿#%RAML 1.0
+title: Global Miles Airline API
+version: 1.0
+baseUri: default
+baseUriParameters: {}
+documentation:
+- title: Global Miles Airline API
+  content: API for Airlines
+types:
+  FlightCreateRequest:
+    example:
+      value:
+        award_miles_rules:
+          award_type: distance_based
+          base_ratio: 50
+          checkin_ratio: 20
+          checkout_ratio: 20
+          survey_ratio: 20
+        passenger:
+          first_name: JOHN
+          last_name: DOE
+          mobile: +12123334455
+          email: john.doe@example.com
+          gender: male
+          birthday: 19760101
+          language: en
+        routing_type: one_way
+        flights:
+        - airline: ZZ
+          cabin_type: y
+          flight_number: ZZ1234
+          pnr: ZXC34E
+          ticket_number: 12345678901
+          departure_airport: NYC
+          arrival_airport: CDG
+          departure_date_time: 11/17/2017 7:00:00 PM
+          arrival_date_time: 11/17/2017 9:00:00 PM
+          distance: 550
+          total_amount:
+            currency_code: USD
+            value: 1400.99
+    displayName: FlightCreateRequest
+    type: object
+    properties:
+      award_miles_rules:
+        required: true
+        displayName: award_miles_rules
+        description: A complex object for definition of the award mile calculation logic.
+        type: AwardMilesRules
+      passenger:
+        required: true
+        displayName: passenger
+        description: A complex object for representing a passenger.
+        type: PassengerMax
+      routing_type:
+        required: true
+        displayName: routing_type
+        description: Routing type of the flights.
+        type: string
+        enum:
+        - one_way
+        - round_trip
+      flights:
+        required: true
+        displayName: flights
+        description: An array of flights. We are expecting one flight for one way trip and two flights for round trip.
+        type: array
+        items:
+          type: FlightMax
+  Response:
+    example:
+      value:
+        status: ok
+        message: ''
+    displayName: Response
+    description: Basic response object
+    type: object
+    properties:
+      status:
+        required: true
+        displayName: status
+        description: The status of the request. It is always 'ok' for successful responses.
+        type: string
+      message:
+        required: false
+        displayName: message
+        description: The message for the unsuccessful request. It is always null for successful responses.
+        type: string
+  Amount:
+    example:
+      value:
+        currency_code: USD
+        value: 1400.99
+    displayName: Amount
+    description: A complex object for the amount.
+    type: object
+    properties:
+      currency_code:
+        required: true
+        displayName: currency_code
+        description: ISO 4217 currency code of the amount.
+        type: string
+      value:
+        required: true
+        displayName: value
+        description: A decimal value with two decimals in the string representation of amount.
+        type: number
+        format: double
+  FlightMax:
+    displayName: FlightMax
+    description: ''
+    type: object
+    properties:
+      airline:
+        required: true
+        displayName: airline
+        description: IATA code for airline company.
+        type: string
+      cabin_type:
+        required: true
+        displayName: cabin_type
+        description: Cabin type of the flight.
+        type: string
+      flight_number:
+        required: true
+        displayName: flight_number
+        description: Number of the flight.
+        type: string
+      pnr:
+        required: true
+        displayName: pnr
+        description: Passenger name record of the flight.
+        type: string
+      ticket_number:
+        required: true
+        displayName: ticket_number
+        description: Ticket number of the passenger.
+        type: string
+      departure_airport:
+        required: true
+        displayName: departure_airport
+        description: IATA code for the departure airport.
+        type: string
+      arrival_airport:
+        required: true
+        displayName: arrival_airport
+        description: IATA code for the  arrival airport.
+        type: string
+      departure_date_time:
+        required: true
+        displayName: departure_date_time
+        description: ISO 8601 date and time in UTC for departure time.
+        type: string
+      arrival_date_time:
+        required: true
+        displayName: arrival_date_time
+        description: ISO 8601 date and time in UTC for arrival time.
+        type: string
+      total_amount:
+        required: true
+        displayName: total_amount
+        description: A complex object for the amount of the flight including currency and value.
+        type: Amount
+      distance:
+        required: false
+        displayName: distance
+        description: The distance between departure and arrival airports.
+        type: integer
+        format: int32
+  PassengerMax:
+    displayName: PassengerMax
+    description: A complex object for representing a passenger.
+    type: object
+    properties:
+      first_name:
+        required: true
+        displayName: first_name
+        description: First name of the passenger. Maximum length is 40 characters.
+        type: string
+      last_name:
+        required: true
+        displayName: last_name
+        description: Last name of the passenger. Maximum length is 40 characters.
+        type: string
+      mobile:
+        required: true
+        displayName: mobile
+        description: Mobile phone number of the passenger. It is a unique identifier for passengers in the system. The format is E.164.
+        type: string
+      email:
+        required: true
+        displayName: email
+        description: Email address of the passenger.
+        type: string
+      language:
+        required: false
+        default: en
+        displayName: language
+        description: The language of the passenger. Possible values are 'en' and 'tr'. Default value is 'en'.
+        type: string
+        enum:
+        - en
+        - tr
+      gender:
+        required: false
+        displayName: gender
+        description: Gender of the passenger. The possible values are 'female', 'male' or 'unknown'.
+        type: string
+        enum:
+        - male
+        - female
+        - unknown
+      birthday:
+        required: false
+        displayName: birthday
+        description: Birthday of the passenger. The possible values are a date with YYYYMMDD formatted or null.
+        type: string
+  AwardMilesRules:
+    displayName: AwardMilesRules
+    description: A complex object for definition of the award mile calculation logic.
+    type: object
+    properties:
+      award_type:
+        required: true
+        displayName: award_type
+        description: The type of the award base. The possible values are 'distance_based' and 'fair_based'.
+        type: string
+        enum:
+        - distance_based
+        - fair_based
+      base_ratio:
+        required: true
+        displayName: base_ratio
+        description: The ratio for calculating base mile from distance or fair. Possible value is an integer between 1 and 100.
+        type: integer
+        format: int32
+      checkin_ratio:
+        required: true
+        displayName: checkin_ratio
+        description: The additional mile ratio for a check-in operation. Possible value as an integer between 0 and 100.
+        type: integer
+        format: int32
+      checkout_ratio:
+        required: true
+        displayName: checkout_ratio
+        description: The additional mile ratio for a check-out operation. Possible value as an integer between 0 and 100.
+        type: integer
+        format: int32
+      survey_ratio:
+        required: true
+        displayName: survey_ratio
+        description: The additional mile ratio for a survey. Possible value as an integer between 0 and 100.
+        type: integer
+        format: int32
+  MemberSearchRequest:
+    example:
+      value:
+        ffp_number: 123456789
+        first_name: JOHN
+        last_name: DOE
+    displayName: MemberSearchRequest
+    description: ''
+    type: object
+    properties:
+      ffp_number:
+        required: true
+        displayName: ffp_number
+        description: FFP number of member
+        type: string
+      first_name:
+        required: true
+        displayName: first_name
+        description: First name
+        type: string
+      last_name:
+        required: true
+        displayName: last_name
+        description: Last name
+        type: string
+  PassengerMin:
+    displayName: PassengerMin
+    description: A complex object for representing a minimal passenger information.
+    type: object
+    properties:
+      first_name:
+        required: true
+        displayName: first_name
+        description: First name of the passenger. Maximum length is 40 characters.
+        type: string
+      last_name:
+        required: true
+        displayName: last_name
+        description: Last name of the passenger. Maximum length is 40 characters.
+        type: string
+      mobile:
+        required: true
+        displayName: mobile
+        description: Mobile phone number of the passenger. It is a unique identifier for passengers in the system. The format is E.164.
+        type: string
+      email:
+        required: true
+        displayName: email
+        description: Email address of the passenger.
+        type: string
+  NewMemberRequest:
+    example:
+      value:
+        user:
+          first_name: JOHN
+          last_name: DOE
+          mobile: +12123334455
+          email: john.doe@example.com
+          gender: male
+          birthday: 19760101
+          language: en
+        flight:
+          airline: ZZ
+          pnr: ZXC34E
+          departure_airport: NYC
+          arrival_airport: CDG
+          departure_date: 2017-11-17
+    displayName: NewMemberRequest
+    type: object
+    properties:
+      user:
+        required: true
+        displayName: user
+        description: A complex object for representing a user.
+        type: User
+      flight:
+        required: true
+        displayName: flight
+        description: A complex object for flight.
+        type: FlightSimple
+  FlightMin:
+    example:
+      value:
+        pnr: RJ2BSA
+        ticket_number: 6242174737502
+        flight_number: ZZ1234
+    displayName: FlightMin
+    description: ''
+    type: object
+    properties:
+      pnr:
+        required: true
+        displayName: pnr
+        description: Passenger name record of the flight.
+        type: string
+      ticket_number:
+        required: true
+        displayName: ticket_number
+        description: Ticket number of the passenger.
+        type: string
+      flight_number:
+        required: true
+        displayName: flight_number
+        description: Number of the flight.
+        type: string
+  MemberSearchResponse:
+    example:
+      value:
+        status: ok
+        card_type: red
+        base_miles: 5000
+        promo_miles: 100
+    displayName: MemberSearchResponse
+    description: ''
+    type: Response
+    properties:
+      card_type:
+        required: true
+        displayName: card_type
+        description: Type of miles card.
+        type: string
+        enum:
+        - unknown
+        - basic
+        - red
+        - silver
+        - gold
+        - platinum
+        - diamond
+        - corparate
+      base_miles:
+        required: true
+        displayName: base_miles
+        description: Value of current miles.
+        type: integer
+        format: int32
+      promo_miles:
+        required: true
+        displayName: promo_miles
+        description: Value of status miles.
+        type: integer
+        format: int32
+  FlightSimple:
+    displayName: FlightSimple
+    description: A complex object for flight.
+    type: object
+    properties:
+      airline:
+        required: true
+        displayName: airline
+        description: IATA code for airline company.
+        type: string
+      pnr:
+        required: true
+        displayName: pnr
+        description: Passenger name record of the flight.
+        type: string
+      departure_date:
+        required: true
+        displayName: departure_date
+        description: ISO 8601 date for departure time.
+        type: string
+      departure_airport:
+        required: true
+        displayName: departure_airport
+        description: IATA code for the departure airport.
+        type: string
+      arrival_airport:
+        required: true
+        displayName: arrival_airport
+        description: IATA code for the  arrival airport.
+        type: string
+  User:
+    displayName: User
+    description: A complex object for representing a user.
+    type: object
+    properties:
+      first_name:
+        required: true
+        displayName: first_name
+        description: First name of the user. Maximum length is 40 characters.
+        type: string
+      last_name:
+        required: true
+        displayName: last_name
+        description: Last name of the user. Maximum length is 40 characters.
+        type: string
+      mobile:
+        required: true
+        displayName: mobile
+        description: Mobile phone number of the user It is a unique identifier for users in the system. The format is E.164.
+        type: string
+      email:
+        required: true
+        displayName: email
+        description: Email address of the user.
+        type: string
+      language:
+        required: false
+        displayName: language
+        description: The language of the user. Possible values are 'en' and 'tr'.
+        type: string
+        enum:
+        - en
+        - tr
+      gender:
+        required: false
+        displayName: gender
+        description: Gender of the user. The possible values are 'female', 'male' or 'unknown'.
+        type: string
+        enum:
+        - male
+        - female
+        - unknown
+      birthday:
+        required: false
+        displayName: birthday
+        description: Birthday of the user. The possible values are a date with YYYYMMDD formatted or null.
+        type: string
+      nationality:
+        required: false
+        displayName: nationality
+        description: Nationality
+        type: string
+      national_id_number:
+        required: false
+        displayName: national_id_number
+        description: National ID Number
+        type: string
+      academic_title:
+        required: false
+        displayName: academic_title
+        description: Academic Title
+        type: string
+      address:
+        required: false
+        displayName: address
+        description: Address
+        type: string
+      country:
+        required: false
+        displayName: country
+        description: Country
+        type: string
+      city:
+        required: false
+        displayName: city
+        description: City
+        type: string
+      area:
+        required: false
+        displayName: area
+        description: State/County/Province/Region
+        type: string
+      zip_code:
+        required: false
+        displayName: zip_code
+        description: Zip Code
+        type: string
+      password:
+        required: false
+        displayName: password
+        description: Password
+        type: string
+  FlightStatusResponse:
+    example:
+      value:
+        status: ok
+        flight_status: reissued
+        flight:
+          airline: ZZ
+          cabin_type: economy
+          flight_number: ZZ1235
+          pnr: ZXC34E
+          ticket_number: 12345678901
+          departure_airport: NYC
+          arrival_airport: CDG
+          departure_date_time: 11/18/2017 7:00:00 PM
+          arrival_date_time: 11/18/2017 9:00:00 PM
+          distance: 550
+          total_amount:
+            currency_code: USD
+            value: 1401.99
+    displayName: FlightStatusResponse
+    type: Response
+    properties:
+      flight_status:
+        required: true
+        displayName: flight_status
+        description: The final status of flight. The possible values are 'used', 'unused' and 'reissued'. For the reissued tickets the following new flight information must provided.
+        type: string
+        enum:
+        - used
+        - unused
+        - reissued
+      flight:
+        required: true
+        displayName: flight
+        description: A complex for the flight. It is only accepted for reissued status.
+        type: FlightMax
+  FlightStatusRequest:
+    example:
+      value:
+        passenger:
+          first_name: JOHN
+          last_name: DOE
+          mobile: +12123334455
+          email: john.doe@example.com
+        flight:
+          pnr: RJ2BSA
+          ticket_number: 6242174737502
+          flight_number: ZZ1234
+    displayName: FlightStatusRequest
+    description: ''
+    type: object
+    properties:
+      passenger:
+        required: true
+        displayName: passenger
+        description: A complex object for representing passenger.
+        type: PassengerMin
+      flight:
+        required: true
+        displayName: flight
+        description: A complex object for flight.
+        type: FlightMin
+  NewMemberResponse:
+    example:
+      value:
+        status: ok
+        ffp_number: 12345678902
+        card_type: basic
+    displayName: NewMemberResponse
+    description: ''
+    type: Response
+    properties:
+      ffp_number:
+        required: false
+        displayName: ffp_number
+        description: Card number of frequent flyer.
+        type: string
+      card_type:
+        required: false
+        displayName: card_type
+        description: Type of the miles card.
+        type: string
+        enum:
+        - unknown
+        - basic
+        - red
+        - silver
+        - gold
+        - platinum
+        - diamond
+        - corparate
+      need_extra_info:
+        required: false
+        displayName: need_extra_info
+        description: If the provided information is not enough to create a ffp member, this field can use to get new information. The possible values are language, gender, birthday, nationality, national_id_number, academic_title, address, country, city, area, zip_code, password. We will collect the additional information from user and will enhance the first request and will send it again.
+        type: array
+        items:
+          type: string
+          enum:
+          - nationality
+          - national_id_number
+          - language
+          - gender
+          - birthday
+          - academic_title
+          - address
+          - country
+          - city
+          - area
+          - zip_code
+          - password
+/v1/airline:
+  /flights:
+    post:
+      displayName: Flight Creation
+      description: This endpoint allows to create a flight on the system and defines the mileage rules for the passenger.
+      body:
+        application/json:
+          example:
+            value:
+              award_miles_rules:
+                award_type: distance_based
+                base_ratio: 50
+                checkin_ratio: 20
+                checkout_ratio: 20
+                survey_ratio: 20
+              passenger:
+                first_name: JOHN
+                last_name: DOE
+                mobile: +12123334455
+                email: john.doe@example.com
+                gender: male
+                birthday: 19760101
+                language: en
+              routing_type: one_way
+              flights:
+              - airline: ZZ
+                cabin_type: y
+                flight_number: ZZ1234
+                pnr: ZXC34E
+                ticket_number: 12345678901
+                departure_airport: NYC
+                arrival_airport: CDG
+                departure_date_time: 11/17/2017 7:00:00 PM
+                arrival_date_time: 11/17/2017 9:00:00 PM
+                distance: 550
+                total_amount:
+                  currency_code: USD
+                  value: 1400.99
+          displayName: Body
+          description: The body of the request.
+          type: FlightCreateRequest
+      headers:
+        Accept:
+          required: true
+          default: application/json
+          example:
+            value: application/json
+          displayName: Accept
+          description: It advertises which content type is able to understand.
+          type: string
+        Content-Type:
+          required: true
+          default: application/json
+          example:
+            value: application/json
+          displayName: Content-Type
+          description: It tells the client what the content type of the returned.
+          type: string
+      responses:
+        200:
+          description: Success
+          body:
+            application/json:
+              example:
+                value:
+                  status: ok
+                  message: ''
+              displayName: response
+              type: Response
+    /actions/status:
+      post:
+        displayName: Flight Status
+        description: This endpoint allows to search the status of flight.
+        body:
+          application/json:
+            example:
+              value:
+                passenger:
+                  first_name: JOHN
+                  last_name: DOE
+                  mobile: +12123334455
+                  email: john.doe@example.com
+                flight:
+                  pnr: RJ2BSA
+                  ticket_number: 6242174737502
+                  flight_number: ZZ1234
+            displayName: Body
+            description: The body of the request.
+            type: FlightStatusRequest
+        headers:
+          Accept:
+            required: true
+            default: application/json
+            example:
+              value: application/json
+            displayName: Accept
+            description: It advertises which content type is able to understand.
+            type: string
+          Content-Type:
+            required: true
+            default: application/json
+            example:
+              value: application/json
+            displayName: Content-Type
+            description: It tells the client what the content type of the returned.
+            type: string
+        responses:
+          200:
+            description: Success
+            body:
+              application/json:
+                example:
+                  value:
+                    status: ok
+                    flight_status: reissued
+                    flight:
+                      airline: ZZ
+                      cabin_type: economy
+                      flight_number: ZZ1235
+                      pnr: ZXC34E
+                      ticket_number: 12345678901
+                      departure_airport: NYC
+                      arrival_airport: CDG
+                      departure_date_time: 11/18/2017 7:00:00 PM
+                      arrival_date_time: 11/18/2017 9:00:00 PM
+                      distance: 550
+                      total_amount:
+                        currency_code: USD
+                        value: 1401.99
+                displayName: response
+                type: FlightStatusResponse
+  /members:
+    /:
+      post:
+        displayName: Recommend a New Member
+        description: This endpoint allows to recommend a new member to airlines.
+        body:
+          application/json:
+            example:
+              value:
+                user:
+                  first_name: JOHN
+                  last_name: DOE
+                  mobile: +12123334455
+                  email: john.doe@example.com
+                  gender: male
+                  birthday: 19760101
+                  language: en
+                flight:
+                  airline: ZZ
+                  pnr: ZXC34E
+                  departure_airport: NYC
+                  arrival_airport: CDG
+                  departure_date: 2017-11-17
+            displayName: Body
+            description: The body of the request.
+            type: NewMemberRequest
+        headers:
+          Accept:
+            required: true
+            default: application/json
+            example:
+              value: application/json
+            displayName: Accept
+            description: It advertises which content type is able to understand.
+            type: string
+          Content-Type:
+            required: true
+            default: application/json
+            example:
+              value: application/json
+            displayName: Content-Type
+            description: It tells the client what the content type of the returned.
+            type: string
+        responses:
+          200:
+            description: Success
+            body:
+              application/json:
+                example:
+                  value:
+                    status: ok
+                    ffp_number: 12345678902
+                    card_type: basic
+                displayName: response
+                type: NewMemberResponse
+    /actions/search:
+      post:
+        displayName: Member Search
+        description: This endpoint allows to search a member on the airline system.
+        body:
+          application/json:
+            example:
+              value:
+                ffp_number: 123456789
+                first_name: JOHN
+                last_name: DOE
+            displayName: Body
+            description: The body of the request.
+            type: MemberSearchRequest
+        headers:
+          Accept:
+            required: true
+            default: application/json
+            example:
+              value: application/json
+            displayName: Accept
+            description: It advertises which content type is able to understand.
+            type: string
+          Content-Type:
+            required: true
+            default: application/json
+            example:
+              value: application/json
+            displayName: Content-Type
+            description: It tells the client what the content type of the returned.
+            type: string
+        responses:
+          200:
+            description: Success
+            body:
+              application/json:
+                example:
+                  value:
+                    status: ok
+                    card_type: red
+                    base_miles: 5000
+                    promo_miles: 100
+                displayName: response
+                type: MemberSearchResponse

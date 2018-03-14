@@ -1,0 +1,959 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://wadl.dev.java.net/2009/02" xmlns:tns="http://tempuri.org">
+  <doc title="Global Miles Airline API" xml:lang="en">API for Airlines</doc>
+  <grammars>
+    <xs:schema xmlns:tns="http://tempuri.org" targetNamespace="http://tempuri.org" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="FlightCreateRequest">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="award_miles_rules" type="tns:AwardMilesRules">
+            <xs:annotation>
+              <xs:documentation>A complex object for definition of the award mile calculation logic.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" name="passenger" type="tns:PassengerMax">
+            <xs:annotation>
+              <xs:documentation>A complex object for representing a passenger.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" name="routing_type" type="tns:RoutingType">
+            <xs:annotation>
+              <xs:documentation>Routing type of the flights.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" maxOccurs="unbounded" name="flights" type="tns:FlightMax">
+            <xs:annotation>
+              <xs:documentation>An array of flights. We are expecting one flight for one way trip and two flights for round trip.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Response">
+        <xs:annotation>
+          <xs:documentation>Basic response object</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="status">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>The status of the request. It is always 'ok' for successful responses.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="message">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>The message for the unsuccessful request. It is always null for successful responses.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Amount">
+        <xs:annotation>
+          <xs:documentation>A complex object for the amount.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="currency_code">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>ISO 4217 currency code of the amount.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="value">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>A decimal value with two decimals in the string representation of amount.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:double" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="FlightMax">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="airline">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>IATA code for airline company.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="cabin_type">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Cabin type of the flight.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="flight_number">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Number of the flight.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="pnr">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Passenger name record of the flight.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="ticket_number">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Ticket number of the passenger.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="departure_airport">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>IATA code for the departure airport.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="arrival_airport">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>IATA code for the  arrival airport.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="departure_date_time">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>ISO 8601 date and time in UTC for departure time.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="arrival_date_time">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>ISO 8601 date and time in UTC for arrival time.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="total_amount" type="tns:Amount">
+            <xs:annotation>
+              <xs:documentation>A complex object for the amount of the flight including currency and value.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="distance">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>The distance between departure and arrival airports.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:integer" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="GenderType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="male">
+            <xs:annotation>
+              <xs:documentation>Male</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="female">
+            <xs:annotation>
+              <xs:documentation>Female</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="unknown">
+            <xs:annotation>
+              <xs:documentation>Unknown</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="PassengerMax">
+        <xs:annotation>
+          <xs:documentation>A complex object for representing a passenger.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="first_name">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>First name of the passenger. Maximum length is 40 characters.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="last_name">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Last name of the passenger. Maximum length is 40 characters.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="mobile">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Mobile phone number of the passenger. It is a unique identifier for passengers in the system. The format is E.164.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="email">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Email address of the passenger.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" default="en" name="language" type="tns:LanguageType">
+            <xs:annotation>
+              <xs:documentation>The language of the passenger. Possible values are 'en' and 'tr'. Default value is 'en'.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="gender" type="tns:GenderType">
+            <xs:annotation>
+              <xs:documentation>Gender of the passenger. The possible values are 'female', 'male' or 'unknown'.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="birthday">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Birthday of the passenger. The possible values are a date with YYYYMMDD formatted or null.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="AwardMilesRules">
+        <xs:annotation>
+          <xs:documentation>A complex object for definition of the award mile calculation logic.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="award_type" type="tns:AwardType">
+            <xs:annotation>
+              <xs:documentation>The type of the award base. The possible values are 'distance_based' and 'fair_based'.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" name="base_ratio">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>The ratio for calculating base mile from distance or fair. Possible value is an integer between 1 and 100.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:integer" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="checkin_ratio">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>The additional mile ratio for a check-in operation. Possible value as an integer between 0 and 100.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:integer" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="checkout_ratio">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>The additional mile ratio for a check-out operation. Possible value as an integer between 0 and 100.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:integer" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="survey_ratio">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>The additional mile ratio for a survey. Possible value as an integer between 0 and 100.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:integer" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="LanguageType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="en">
+            <xs:annotation>
+              <xs:documentation>for English</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="tr">
+            <xs:annotation>
+              <xs:documentation>for Turkish</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="AwardType">
+        <xs:annotation>
+          <xs:documentation>The type of the award base. The possible values are 'distance_based' and 'fair_based'.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="distance_based" />
+          <xs:enumeration value="fair_based" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="MemberSearchRequest">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="ffp_number">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>FFP number of member</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="first_name">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>First name</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="last_name">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Last name</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="FlightStatusType">
+        <xs:annotation>
+          <xs:documentation>The final status of flight. The possible values are 'used', 'unused' and 'reissued'.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="used">
+            <xs:annotation>
+              <xs:documentation>Used</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="unused">
+            <xs:annotation>
+              <xs:documentation>Unused</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="reissued">
+            <xs:annotation>
+              <xs:documentation>Reissued</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="PassengerMin">
+        <xs:annotation>
+          <xs:documentation>A complex object for representing a minimal passenger information.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="first_name">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>First name of the passenger. Maximum length is 40 characters.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="last_name">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Last name of the passenger. Maximum length is 40 characters.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="mobile">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Mobile phone number of the passenger. It is a unique identifier for passengers in the system. The format is E.164.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="email">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Email address of the passenger.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="NewMemberRequest">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="user" type="tns:User">
+            <xs:annotation>
+              <xs:documentation>A complex object for representing a user.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" name="flight" type="tns:FlightSimple">
+            <xs:annotation>
+              <xs:documentation>A complex object for flight.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="FlightMin">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="pnr">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Passenger name record of the flight.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="ticket_number">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Ticket number of the passenger.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="flight_number">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Number of the flight.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="MemberSearchResponse">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:Response">
+            <xs:sequence>
+              <xs:element minOccurs="1" name="card_type" type="tns:CardType">
+                <xs:annotation>
+                  <xs:documentation>Type of miles card.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element minOccurs="1" name="base_miles">
+                <xs:simpleType>
+                  <xs:annotation>
+                    <xs:documentation>Value of current miles.</xs:documentation>
+                  </xs:annotation>
+                  <xs:restriction base="xs:integer" />
+                </xs:simpleType>
+              </xs:element>
+              <xs:element minOccurs="1" name="promo_miles">
+                <xs:simpleType>
+                  <xs:annotation>
+                    <xs:documentation>Value of status miles.</xs:documentation>
+                  </xs:annotation>
+                  <xs:restriction base="xs:integer" />
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="FlightSimple">
+        <xs:annotation>
+          <xs:documentation>A complex object for flight.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="airline">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>IATA code for airline company.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="pnr">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Passenger name record of the flight.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="departure_date">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>ISO 8601 date for departure time.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="departure_airport">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>IATA code for the departure airport.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="arrival_airport">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>IATA code for the  arrival airport.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="User">
+        <xs:annotation>
+          <xs:documentation>A complex object for representing a user.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element minOccurs="1" name="first_name">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>First name of the user. Maximum length is 40 characters.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="last_name">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Last name of the user. Maximum length is 40 characters.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="mobile">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Mobile phone number of the user It is a unique identifier for users in the system. The format is E.164.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" name="email">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Email address of the user.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="language" type="tns:LanguageType">
+            <xs:annotation>
+              <xs:documentation>The language of the user. Possible values are 'en' and 'tr'.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="gender" type="tns:GenderType">
+            <xs:annotation>
+              <xs:documentation>Gender of the user. The possible values are 'female', 'male' or 'unknown'.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="birthday">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Birthday of the user. The possible values are a date with YYYYMMDD formatted or null.</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="nationality">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Nationality</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="national_id_number">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>National ID Number</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="academic_title">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Academic Title</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="address">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Address</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="country">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Country</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="city">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>City</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="area">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>State/County/Province/Region</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="zip_code">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Zip Code</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="0" name="password">
+            <xs:simpleType>
+              <xs:annotation>
+                <xs:documentation>Password</xs:documentation>
+              </xs:annotation>
+              <xs:restriction base="xs:string" />
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="FlightStatusResponse">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:Response">
+            <xs:sequence>
+              <xs:element minOccurs="1" name="flight_status" type="tns:FlightStatusType">
+                <xs:annotation>
+                  <xs:documentation>The final status of flight. The possible values are 'used', 'unused' and 'reissued'. For the reissued tickets the following new flight information must provided.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element minOccurs="1" name="flight" type="tns:FlightMax">
+                <xs:annotation>
+                  <xs:documentation>A complex for the flight. It is only accepted for reissued status.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:complexType name="FlightStatusRequest">
+        <xs:sequence>
+          <xs:element minOccurs="1" name="passenger" type="tns:PassengerMin">
+            <xs:annotation>
+              <xs:documentation>A complex object for representing passenger.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="1" name="flight" type="tns:FlightMin">
+            <xs:annotation>
+              <xs:documentation>A complex object for flight.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="NewMemberResponse">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:Response">
+            <xs:sequence>
+              <xs:element minOccurs="0" name="ffp_number">
+                <xs:simpleType>
+                  <xs:annotation>
+                    <xs:documentation>Card number of frequent flyer.</xs:documentation>
+                  </xs:annotation>
+                  <xs:restriction base="xs:string" />
+                </xs:simpleType>
+              </xs:element>
+              <xs:element minOccurs="0" name="card_type" type="tns:CardType">
+                <xs:annotation>
+                  <xs:documentation>Type of the miles card.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element minOccurs="0" maxOccurs="unbounded" name="need_extra_info" type="tns:ExtraInfoType">
+                <xs:annotation>
+                  <xs:documentation>If the provided information is not enough to create a ffp member, this field can use to get new information. The possible values are language, gender, birthday, nationality, national_id_number, academic_title, address, country, city, area, zip_code, password. We will collect the additional information from user and will enhance the first request and will send it again.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:simpleType name="ExtraInfoType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="nationality">
+            <xs:annotation>
+              <xs:documentation>Nationality</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="national_id_number">
+            <xs:annotation>
+              <xs:documentation>National ID Number</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="language">
+            <xs:annotation>
+              <xs:documentation>Language</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="gender">
+            <xs:annotation>
+              <xs:documentation>Gender</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="birthday">
+            <xs:annotation>
+              <xs:documentation>Birthday</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="academic_title">
+            <xs:annotation>
+              <xs:documentation>Academic Title</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="address">
+            <xs:annotation>
+              <xs:documentation>Address</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="country">
+            <xs:annotation>
+              <xs:documentation>Country</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="city">
+            <xs:annotation>
+              <xs:documentation>City</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="area">
+            <xs:annotation>
+              <xs:documentation>Area</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="zip_code">
+            <xs:annotation>
+              <xs:documentation>Zip Code</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="password">
+            <xs:annotation>
+              <xs:documentation>Password</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="RoutingType">
+        <xs:annotation>
+          <xs:documentation>Routing type of the flights. 'one_way' for one way, 'round_trip' for round trip.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="one_way">
+            <xs:annotation>
+              <xs:documentation>One way trip indicator.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="round_trip">
+            <xs:annotation>
+              <xs:documentation>Round trip indicator.</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="CabinType">
+        <xs:annotation>
+          <xs:documentation>Cabin type of the flight.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="unknown">
+            <xs:annotation>
+              <xs:documentation>Unknown</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="discount_economy">
+            <xs:annotation>
+              <xs:documentation>Discount Economy</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="economy">
+            <xs:annotation>
+              <xs:documentation>Economy</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="full_economy">
+            <xs:annotation>
+              <xs:documentation>Full Economy</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="premium_economy">
+            <xs:annotation>
+              <xs:documentation>Premium Economy</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="discount_business">
+            <xs:annotation>
+              <xs:documentation>Discount Business</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="business">
+            <xs:annotation>
+              <xs:documentation>Business</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="premium_business">
+            <xs:annotation>
+              <xs:documentation>Premium Business</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="first">
+            <xs:annotation>
+              <xs:documentation>First</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="premium_first">
+            <xs:annotation>
+              <xs:documentation>Premium First</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="CardType">
+        <xs:annotation>
+          <xs:documentation>Type of card</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="unknown">
+            <xs:annotation>
+              <xs:documentation>Unknown</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="basic">
+            <xs:annotation>
+              <xs:documentation>Basic</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="red">
+            <xs:annotation>
+              <xs:documentation>Red</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="silver">
+            <xs:annotation>
+              <xs:documentation>Silver</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="gold">
+            <xs:annotation>
+              <xs:documentation>Gold</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="platinum">
+            <xs:annotation>
+              <xs:documentation>Platinum</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="diamond">
+            <xs:annotation>
+              <xs:documentation>Diamond</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="corparate">
+            <xs:annotation>
+              <xs:documentation>Corparate</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:schema>
+  </grammars>
+  <resources base="default">
+    <resource id="_v1airlinemembers" path="/v1/airline/members/">
+      <method id="RecommendaNewMember" name="POST">
+        <doc title="Recommend a New Member" xml:lang="en">This endpoint allows to recommend a new member to airlines.</doc>
+        <request>
+          <param name="Accept" style="header" type="xsd:string" default="application/json" required="true">
+            <doc title="Accept" xml:lang="en">It advertises which content type is able to understand.</doc>
+          </param>
+          <param name="Content-Type" style="header" type="xsd:string" default="application/json" required="true">
+            <doc title="Content-Type" xml:lang="en">It tells the client what the content type of the returned.</doc>
+          </param>
+          <representation element="tns:NewMemberRequest" mediaType="application/json" />
+        </request>
+        <response status="200">
+          <representation element="tns:NewMemberResponse" mediaType="application/json" />
+        </response>
+      </method>
+    </resource>
+    <resource id="_v1airlineflightsactionsstatus" path="/v1/airline/flights/actions/status">
+      <method id="FlightStatus" name="POST">
+        <doc title="Flight Status" xml:lang="en">This endpoint allows to search the status of flight.</doc>
+        <request>
+          <param name="Accept" style="header" type="xsd:string" default="application/json" required="true">
+            <doc title="Accept" xml:lang="en">It advertises which content type is able to understand.</doc>
+          </param>
+          <param name="Content-Type" style="header" type="xsd:string" default="application/json" required="true">
+            <doc title="Content-Type" xml:lang="en">It tells the client what the content type of the returned.</doc>
+          </param>
+          <representation element="tns:FlightStatusRequest" mediaType="application/json" />
+        </request>
+        <response status="200">
+          <representation element="tns:FlightStatusResponse" mediaType="application/json" />
+        </response>
+      </method>
+    </resource>
+    <resource id="_v1airlineflights" path="/v1/airline/flights">
+      <method id="FlightCreation" name="POST">
+        <doc title="Flight Creation" xml:lang="en">This endpoint allows to create a flight on the system and defines the mileage rules for the passenger.</doc>
+        <request>
+          <param name="Accept" style="header" type="xsd:string" default="application/json" required="true">
+            <doc title="Accept" xml:lang="en">It advertises which content type is able to understand.</doc>
+          </param>
+          <param name="Content-Type" style="header" type="xsd:string" default="application/json" required="true">
+            <doc title="Content-Type" xml:lang="en">It tells the client what the content type of the returned.</doc>
+          </param>
+          <representation element="tns:FlightCreateRequest" mediaType="application/json" />
+        </request>
+        <response status="200">
+          <representation element="tns:Response" mediaType="application/json" />
+        </response>
+      </method>
+    </resource>
+    <resource id="_v1airlinemembersactionssearch" path="/v1/airline/members/actions/search">
+      <method id="MemberSearch" name="POST">
+        <doc title="Member Search" xml:lang="en">This endpoint allows to search a member on the airline system.</doc>
+        <request>
+          <param name="Accept" style="header" type="xsd:string" default="application/json" required="true">
+            <doc title="Accept" xml:lang="en">It advertises which content type is able to understand.</doc>
+          </param>
+          <param name="Content-Type" style="header" type="xsd:string" default="application/json" required="true">
+            <doc title="Content-Type" xml:lang="en">It tells the client what the content type of the returned.</doc>
+          </param>
+          <representation element="tns:MemberSearchRequest" mediaType="application/json" />
+        </request>
+        <response status="200">
+          <representation element="tns:MemberSearchResponse" mediaType="application/json" />
+        </response>
+      </method>
+    </resource>
+  </resources>
+</application>
