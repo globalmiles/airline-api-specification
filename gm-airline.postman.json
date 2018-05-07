@@ -1,0 +1,152 @@
+﻿{
+  "info": {
+    "name": "Global Miles Airline API",
+    "_postman_id": "4ae341bf-b386-4ef2-9956-7abb9a4b97c5",
+    "description": "API for Airlines",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/"
+  },
+  "item": [
+    {
+      "name": "Members",
+      "item": [
+        {
+          "id": "fc15081f-bc29-462d-8985-f6de24a01874",
+          "name": "Recommend a New Member",
+          "request": {
+            "url": "http://default/v1/airline/members/",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "disabled": false
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json;charset=utf-8",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"user\": {\r\n    \"first_name\": \"JOHN\",\r\n    \"last_name\": \"DOE\",\r\n    \"mobile\": \"+12123334455\",\r\n    \"email\": \"john.doe@example.com\",\r\n    \"gender\": \"male\",\r\n    \"birthday\": \"19760101\",\r\n    \"language\": \"en\"\r\n  },\r\n  \"flight\": {\r\n    \"airline\": \"ZZ\",\r\n    \"pnr\": \"ZXC34E\",\r\n    \"departure_airport\": \"NYC\",\r\n    \"arrival_airport\": \"CDG\",\r\n    \"departure_date\": \"2017-11-17\"\r\n  }\r\n}"
+            },
+            "description": "This endpoint allows to recommend a new member to airlines."
+          },
+          "response": [
+            {
+              "body": "{\r\n  \"status\": \"ok\",\r\n  \"ffp_number\": \"12345678902\",\r\n  \"tier_type\": \"basic\"\r\n}",
+              "code": 200,
+              "name": "Response_200",
+              "id": "f2513ab1-0372-41e0-9adb-840937c874c9"
+            }
+          ]
+        },
+        {
+          "id": "83030525-19dd-49ba-bc07-d2d334aae83a",
+          "name": "Member Search",
+          "request": {
+            "url": "http://default/v1/airline/members/actions/search",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "disabled": false
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json;charset=utf-8",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"ffp_number\": \"123456789\",\r\n  \"first_name\": \"JOHN\",\r\n  \"last_name\": \"DOE\"\r\n}"
+            },
+            "description": "This endpoint allows to search a member on the airline system."
+          },
+          "response": [
+            {
+              "body": "{\r\n  \"status\": \"ok\",\r\n  \"tier_type\": \"tier1\",\r\n  \"base_miles\": 5000,\r\n  \"promo_miles\": 100\r\n}",
+              "code": 200,
+              "name": "Response_200",
+              "id": "ba4b4b08-1095-4d84-8217-722e4d16e65b"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flights",
+      "item": [
+        {
+          "id": "32cbe3fd-5bf4-44a8-84b3-5788d28c414a",
+          "name": "Flight Status",
+          "request": {
+            "url": "http://default/v1/airline/flights/actions/status",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "disabled": false
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json;charset=utf-8",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"passenger\": {\r\n    \"first_name\": \"JOHN\",\r\n    \"last_name\": \"DOE\",\r\n    \"mobile\": \"+12123334455\",\r\n    \"email\": \"john.doe@example.com\"\r\n  },\r\n  \"flight\": {\r\n    \"pnr\": \"RJ2BSA\",\r\n    \"ticket_number\": \"6242174737502\",\r\n    \"flight_number\": \"ZZ1234\"\r\n  }\r\n}"
+            },
+            "description": "This endpoint allows to search the status of flight."
+          },
+          "response": [
+            {
+              "body": "{\r\n  \"status\": \"ok\",\r\n  \"flight_status\": \"reissued\",\r\n  \"flight\": {\r\n    \"airline\": \"ZZ\",\r\n    \"cabin_type\": \"economy\",\r\n    \"flight_number\": \"ZZ1235\",\r\n    \"pnr\": \"ZXC34E\",\r\n    \"ticket_number\": \"12345678901\",\r\n    \"departure_airport\": \"NYC\",\r\n    \"arrival_airport\": \"CDG\",\r\n    \"departure_date_time\": \"2017-11-18T19:00:00+00:00\",\r\n    \"arrival_date_time\": \"2017-11-18T21:00:00+00:00\",\r\n    \"distance\": 550,\r\n    \"total_amount\": {\r\n      \"currency_code\": \"USD\",\r\n      \"value\": 1401.99\r\n    }\r\n  }\r\n}",
+              "code": 200,
+              "name": "Response_200",
+              "id": "5bfc3269-e4bd-437a-bbeb-85797ffc6755"
+            }
+          ]
+        },
+        {
+          "id": "14681bcc-162d-4230-8ebf-35430d2fad99",
+          "name": "Flight Creation",
+          "request": {
+            "url": "http://default/v1/airline/flights",
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "disabled": false
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json;charset=utf-8",
+                "disabled": false
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"award_miles_rules\": {\r\n    \"award_type\": \"distance_based\",\r\n    \"base_ratio\": 50,\r\n    \"checkin_ratio\": 20,\r\n    \"checkout_ratio\": 20,\r\n    \"survey_ratio\": 20\r\n  },\r\n  \"passenger\": {\r\n    \"first_name\": \"JOHN\",\r\n    \"last_name\": \"DOE\",\r\n    \"mobile\": \"+12123334455\",\r\n    \"email\": \"john.doe@example.com\",\r\n    \"gender\": \"male\",\r\n    \"birthday\": \"19760101\",\r\n    \"language\": \"en\"\r\n  },\r\n  \"routing_type\": \"one_way\",\r\n  \"flights\": [\r\n    {\r\n      \"airline\": \"ZZ\",\r\n      \"cabin_type\": \"Y\",\r\n      \"flight_number\": \"ZZ1234\",\r\n      \"pnr\": \"ZXC34E\",\r\n      \"ticket_number\": \"12345678901\",\r\n      \"departure_airport\": \"NYC\",\r\n      \"arrival_airport\": \"CDG\",\r\n      \"departure_date_time\": \"2017-11-17T19:00:00+00:00\",\r\n      \"arrival_date_time\": \"2017-11-17T21:00:00+00:00\",\r\n      \"distance\": 550,\r\n      \"total_amount\": {\r\n        \"currency_code\": \"USD\",\r\n        \"value\": 1400.99\r\n      }\r\n    }\r\n  ]\r\n}"
+            },
+            "description": "This endpoint allows to create a flight on the system and defines the mileage rules for the passenger."
+          },
+          "response": [
+            {
+              "body": "{\r\n  \"status\": \"ok\",\r\n  \"message\": null\r\n}",
+              "code": 200,
+              "name": "Response_200",
+              "id": "10d3f5b2-9e5d-4301-80d9-f6e5746c066a"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

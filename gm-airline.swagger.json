@@ -22,27 +22,13 @@
         "description": "This endpoint allows to recommend a new member to airlines.",
         "summary": "Recommend a New Member",
         "tags": [
-          "Flights"
+          "Members"
         ],
         "operationId": "V1AirlineMembersPost",
         "produces": [
           "application/json"
         ],
         "parameters": [
-          {
-            "name": "Accept",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "It advertises which content type is able to understand."
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "It tells the client what the content type of the returned."
-          },
           {
             "name": "Body",
             "in": "body",
@@ -63,7 +49,7 @@
               "application/json": {
                 "status": "ok",
                 "ffp_number": "12345678902",
-                "card_type": "basic"
+                "tier_type": "basic"
               }
             }
           }
@@ -89,20 +75,6 @@
           "application/json"
         ],
         "parameters": [
-          {
-            "name": "Accept",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "It advertises which content type is able to understand."
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "It tells the client what the content type of the returned."
-          },
           {
             "name": "Body",
             "in": "body",
@@ -165,20 +137,6 @@
         ],
         "parameters": [
           {
-            "name": "Accept",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "It advertises which content type is able to understand."
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "It tells the client what the content type of the returned."
-          },
-          {
             "name": "Body",
             "in": "body",
             "required": true,
@@ -216,27 +174,13 @@
         "description": "This endpoint allows to search a member on the airline system.",
         "summary": "Member Search",
         "tags": [
-          "Flights"
+          "Members"
         ],
         "operationId": "V1AirlineMembersActionsSearchPost",
         "produces": [
           "application/json"
         ],
         "parameters": [
-          {
-            "name": "Accept",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "It advertises which content type is able to understand."
-          },
-          {
-            "name": "Content-Type",
-            "in": "header",
-            "required": true,
-            "type": "string",
-            "description": "It tells the client what the content type of the returned."
-          },
           {
             "name": "Body",
             "in": "body",
@@ -256,7 +200,7 @@
             "examples": {
               "application/json": {
                 "status": "ok",
-                "card_type": "red",
+                "tier_type": "tier1",
                 "base_miles": 5000,
                 "promo_miles": 100
               }
@@ -297,7 +241,7 @@
         "flights": [
           {
             "airline": "ZZ",
-            "cabin_type": "y",
+            "cabin_type": "Y",
             "flight_number": "ZZ1234",
             "pnr": "ZXC34E",
             "ticket_number": "12345678901",
@@ -524,7 +468,7 @@
           "$ref": "#/definitions/AwardType"
         },
         "base_ratio": {
-          "description": "The ratio for calculating base mile from distance or fair. Possible value is an integer between 1 and 100.",
+          "description": "The ratio for calculating base mile from distance or fare. Possible value is an integer between 1 and 100.",
           "example": 50,
           "type": "integer",
           "format": "int32"
@@ -578,7 +522,7 @@
     },
     "AwardType": {
       "title": "AwardType",
-      "description": "The type of the award base. The possible values are 'distance_based' and 'fair_based'.",
+      "description": "The type of the award base. The possible values are 'distance_based' and 'fare_based'.",
       "example": "distance_based",
       "x-enum-elements": [
         {
@@ -586,14 +530,14 @@
           "description": ""
         },
         {
-          "name": "fair_based",
+          "name": "fare_based",
           "description": ""
         }
       ],
       "type": "string",
       "enum": [
         "distance_based",
-        "fair_based"
+        "fare_based"
       ]
     },
     "MemberSearchRequest": {
@@ -758,14 +702,14 @@
         {
           "example": {
             "status": "ok",
-            "card_type": "red",
+            "tier_type": "tier1",
             "base_miles": 5000,
             "promo_miles": 100
           },
           "type": "object",
           "properties": {
-            "card_type": {
-              "$ref": "#/definitions/CardType"
+            "tier_type": {
+              "$ref": "#/definitions/TierType"
             },
             "base_miles": {
               "description": "Value of current miles.",
@@ -781,7 +725,7 @@
             }
           },
           "required": [
-            "card_type",
+            "tier_type",
             "base_miles",
             "promo_miles"
           ]
@@ -981,7 +925,7 @@
           "example": {
             "status": "ok",
             "ffp_number": "12345678902",
-            "card_type": "basic"
+            "tier_type": "basic"
           },
           "type": "object",
           "properties": {
@@ -990,8 +934,8 @@
               "example": "12345678902",
               "type": "string"
             },
-            "card_type": {
-              "$ref": "#/definitions/CardType"
+            "tier_type": {
+              "$ref": "#/definitions/TierType"
             },
             "need_extra_info": {
               "description": "If the provided information is not enough to create a ffp member, this field can use to get new information. The possible values are language, gender, birthday, nationality, national_id_number, academic_title, address, country, city, area, zip_code, password. We will collect the additional information from user and will enhance the first request and will send it again.",
@@ -1093,69 +1037,9 @@
         "round_trip"
       ]
     },
-    "CabinType": {
-      "title": "CabinType",
-      "description": "Cabin type of the flight.",
-      "example": "unknown",
-      "x-enum-elements": [
-        {
-          "name": "unknown",
-          "description": "Unknown"
-        },
-        {
-          "name": "discount_economy",
-          "description": "Discount Economy"
-        },
-        {
-          "name": "economy",
-          "description": "Economy"
-        },
-        {
-          "name": "full_economy",
-          "description": "Full Economy"
-        },
-        {
-          "name": "premium_economy",
-          "description": "Premium Economy"
-        },
-        {
-          "name": "discount_business",
-          "description": "Discount Business"
-        },
-        {
-          "name": "business",
-          "description": "Business"
-        },
-        {
-          "name": "premium_business",
-          "description": "Premium Business"
-        },
-        {
-          "name": "first",
-          "description": "First"
-        },
-        {
-          "name": "premium_first",
-          "description": "Premium First"
-        }
-      ],
-      "type": "string",
-      "enum": [
-        "unknown",
-        "discount_economy",
-        "economy",
-        "full_economy",
-        "premium_economy",
-        "discount_business",
-        "business",
-        "premium_business",
-        "first",
-        "premium_first"
-      ]
-    },
-    "CardType": {
-      "title": "CardType",
-      "description": "Type of card",
+    "TierType": {
+      "title": "TierType",
+      "description": "Type of tiers",
       "example": "unknown",
       "x-enum-elements": [
         {
@@ -1167,27 +1051,27 @@
           "description": "Basic"
         },
         {
-          "name": "red",
+          "name": "tier1",
           "description": "Red"
         },
         {
-          "name": "silver",
+          "name": "tier2",
           "description": "Silver"
         },
         {
-          "name": "gold",
+          "name": "tier3",
           "description": "Gold"
         },
         {
-          "name": "platinum",
+          "name": "tier4",
           "description": "Platinum"
         },
         {
-          "name": "diamond",
+          "name": "tier5",
           "description": "Diamond"
         },
         {
-          "name": "corparate",
+          "name": "tier6",
           "description": "Corparate"
         }
       ],
@@ -1195,12 +1079,142 @@
       "enum": [
         "unknown",
         "basic",
-        "red",
-        "silver",
-        "gold",
-        "platinum",
-        "diamond",
-        "corparate"
+        "tier1",
+        "tier2",
+        "tier3",
+        "tier4",
+        "tier5",
+        "tier6"
+      ]
+    },
+    "CabinType": {
+      "title": "CabinType",
+      "description": "Cabin type of the flight.",
+      "example": "A",
+      "x-enum-elements": [
+        {
+          "name": "A",
+          "description": "First Class Discounted"
+        },
+        {
+          "name": "B",
+          "description": "Economy/Coach"
+        },
+        {
+          "name": "C",
+          "description": "Business Class"
+        },
+        {
+          "name": "D",
+          "description": "Business Class Discounted"
+        },
+        {
+          "name": "E",
+          "description": "Shuttle Service (no reservation allowed) or Economy/Coach Discounted"
+        },
+        {
+          "name": "F",
+          "description": "First Class"
+        },
+        {
+          "name": "G",
+          "description": "Conditional Reservation"
+        },
+        {
+          "name": "H",
+          "description": "Economy/Coach Discounted"
+        },
+        {
+          "name": "J",
+          "description": "Business Class Premium"
+        },
+        {
+          "name": "K",
+          "description": "Economy/Coach Discounted"
+        },
+        {
+          "name": "L",
+          "description": "Economy/Coach Discounted"
+        },
+        {
+          "name": "M",
+          "description": "Economy/Coach Discounted"
+        },
+        {
+          "name": "N",
+          "description": "Economy/Coach Discounted"
+        },
+        {
+          "name": "P",
+          "description": "First Class Premium"
+        },
+        {
+          "name": "Q",
+          "description": "Economy/Coach Discounted"
+        },
+        {
+          "name": "R",
+          "description": "First Class Suite or Supersonic (discontinued)"
+        },
+        {
+          "name": "S",
+          "description": "Economy/Coach"
+        },
+        {
+          "name": "T",
+          "description": "Economy/Coach Discounted"
+        },
+        {
+          "name": "U",
+          "description": "Shuttle Service"
+        },
+        {
+          "name": "V",
+          "description": "Economy/Coach Discounted"
+        },
+        {
+          "name": "W",
+          "description": "Economy/Coach Premium"
+        },
+        {
+          "name": "X",
+          "description": "Economy/Coach Discounted"
+        },
+        {
+          "name": "Y",
+          "description": "Economy/Coach"
+        },
+        {
+          "name": "Z",
+          "description": "Business Class Discounted"
+        }
+      ],
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z"
       ]
     }
   }

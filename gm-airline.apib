@@ -4,7 +4,7 @@ HOST: https://test1.api.globalmiles.com
 # Global Miles Airline API
 API for Airlines
 
-# Group Flights
+# Group Members
 
 ## V1 Airline Members [/v1/airline/members/]
 
@@ -12,10 +12,6 @@ API for Airlines
 This endpoint allows to recommend a new member to airlines.
 
 + Request (application/json)
-    + Headers
-
-            Accept:application/json
-
     + Attributes (NewMemberRequest)
 
 
@@ -27,10 +23,36 @@ This endpoint allows to recommend a new member to airlines.
             {
                 "status": "ok",
                 "ffp_number": "12345678902",
-                "card_type": "basic"
+                "tier_type": "basic"
             }
 
 
+
+## V1 Airline Members Actions Search [/v1/airline/members/actions/search]
+
+### Member Search [POST]
+This endpoint allows to search a member on the airline system.
+
++ Request (application/json)
+    + Attributes (MemberSearchRequest)
+
+
++ Response 200 (application/json)
+    + Attributes (MemberSearchResponse)
+
+    + Body
+
+            {
+              "status": "ok",
+              "tier_type": "tier1",
+              "base_miles": 5000,
+              "promo_miles": 100
+            }
+
+
+
+
+# Group Flights
 
 ## V1 Airline Flights Actions Status [/v1/airline/flights/actions/status]
 
@@ -38,10 +60,6 @@ This endpoint allows to recommend a new member to airlines.
 This endpoint allows to search the status of flight.
 
 + Request (application/json)
-    + Headers
-
-            Accept:application/json
-
     + Attributes (FlightStatusRequest)
 
 
@@ -79,10 +97,6 @@ This endpoint allows to search the status of flight.
 This endpoint allows to create a flight on the system and defines the mileage rules for the passenger.
 
 + Request (application/json)
-    + Headers
-
-            Accept:application/json
-
     + Attributes (FlightCreateRequest)
 
 
@@ -92,33 +106,6 @@ This endpoint allows to create a flight on the system and defines the mileage ru
     + Body
 
             {"status":"ok","message":null}
-
-
-
-## V1 Airline Members Actions Search [/v1/airline/members/actions/search]
-
-### Member Search [POST]
-This endpoint allows to search a member on the airline system.
-
-+ Request (application/json)
-    + Headers
-
-            Accept:application/json
-
-    + Attributes (MemberSearchRequest)
-
-
-+ Response 200 (application/json)
-    + Attributes (MemberSearchResponse)
-
-    + Body
-
-            {
-              "status": "ok",
-              "card_type": "red",
-              "base_miles": 5000,
-              "promo_miles": 100
-            }
 
 
 
@@ -192,10 +179,10 @@ A complex object for representing a passenger.
 A complex object for definition of the award mile calculation logic.
 
 ### Properties
-+ `award_type` (enum[string], required) - The type of the award base. The possible values are 'distance_based' and 'fair_based'.
++ `award_type` (enum[string], required) - The type of the award base. The possible values are 'distance_based' and 'fare_based'.
     + `distance_based`
-    + `fair_based`
-+ `base_ratio`: `50` (number, required) - The ratio for calculating base mile from distance or fair. Possible value is an integer between 1 and 100.
+    + `fare_based`
++ `base_ratio`: `50` (number, required) - The ratio for calculating base mile from distance or fare. Possible value is an integer between 1 and 100.
 + `checkin_ratio`: `20` (number, required) - The additional mile ratio for a check-in operation. Possible value as an integer between 0 and 100.
 + `checkout_ratio`: `20` (number, required) - The additional mile ratio for a check-out operation. Possible value as an integer between 0 and 100.
 + `survey_ratio`: `20` (number, required) - The additional mile ratio for a survey. Possible value as an integer between 0 and 100.
@@ -241,7 +228,7 @@ A complex object for representing a minimal passenger information.
 
 
 ### Properties
-+ `card_type` (enum[string], required) - Type of miles card.
++ `tier_type` (enum[string], required) - Type of tiers.
     + ``
     + ``
     + ``
@@ -316,7 +303,7 @@ A complex object for representing a user.
 
 ### Properties
 + `ffp_number`: `12345678902` (string, optional) - Card number of frequent flyer.
-+ `card_type`: `12345678902` (enum[string], optional) - Type of the miles card.
++ `tier_type`: `12345678902` (enum[string], optional) - Type of tiers.
     + ``
     + ``
     + ``

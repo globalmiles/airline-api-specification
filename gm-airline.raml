@@ -27,7 +27,7 @@ types:
         routing_type: one_way
         flights:
         - airline: ZZ
-          cabin_type: y
+          cabin_type: Y
           flight_number: ZZ1234
           pnr: ZXC34E
           ticket_number: 12345678901
@@ -223,15 +223,15 @@ types:
       award_type:
         required: true
         displayName: award_type
-        description: The type of the award base. The possible values are 'distance_based' and 'fair_based'.
+        description: The type of the award base. The possible values are 'distance_based' and 'fare_based'.
         type: string
         enum:
         - distance_based
-        - fair_based
+        - fare_based
       base_ratio:
         required: true
         displayName: base_ratio
-        description: The ratio for calculating base mile from distance or fair. Possible value is an integer between 1 and 100.
+        description: The ratio for calculating base mile from distance or fare. Possible value is an integer between 1 and 100.
         type: integer
         format: int32
       checkin_ratio:
@@ -361,27 +361,27 @@ types:
     example:
       value:
         status: ok
-        card_type: red
+        tier_type: tier1
         base_miles: 5000
         promo_miles: 100
     displayName: MemberSearchResponse
     description: ''
     type: Response
     properties:
-      card_type:
+      tier_type:
         required: true
-        displayName: card_type
-        description: Type of miles card.
+        displayName: tier_type
+        description: Type of tiers.
         type: string
         enum:
         - unknown
         - basic
-        - red
-        - silver
-        - gold
-        - platinum
-        - diamond
-        - corparate
+        - tier1
+        - tier2
+        - tier3
+        - tier4
+        - tier5
+        - tier6
       base_miles:
         required: true
         displayName: base_miles
@@ -583,7 +583,7 @@ types:
       value:
         status: ok
         ffp_number: 12345678902
-        card_type: basic
+        tier_type: basic
     displayName: NewMemberResponse
     description: ''
     type: Response
@@ -593,20 +593,20 @@ types:
         displayName: ffp_number
         description: Card number of frequent flyer.
         type: string
-      card_type:
+      tier_type:
         required: false
-        displayName: card_type
-        description: Type of the miles card.
+        displayName: tier_type
+        description: Type of tiers.
         type: string
         enum:
         - unknown
         - basic
-        - red
-        - silver
-        - gold
-        - platinum
-        - diamond
-        - corparate
+        - tier1
+        - tier2
+        - tier3
+        - tier4
+        - tier5
+        - tier6
       need_extra_info:
         required: false
         displayName: need_extra_info
@@ -653,7 +653,7 @@ types:
               routing_type: one_way
               flights:
               - airline: ZZ
-                cabin_type: y
+                cabin_type: Y
                 flight_number: ZZ1234
                 pnr: ZXC34E
                 ticket_number: 12345678901
@@ -668,23 +668,6 @@ types:
           displayName: Body
           description: The body of the request.
           type: FlightCreateRequest
-      headers:
-        Accept:
-          required: true
-          default: application/json
-          example:
-            value: application/json
-          displayName: Accept
-          description: It advertises which content type is able to understand.
-          type: string
-        Content-Type:
-          required: true
-          default: application/json
-          example:
-            value: application/json
-          displayName: Content-Type
-          description: It tells the client what the content type of the returned.
-          type: string
       responses:
         200:
           description: Success
@@ -716,23 +699,6 @@ types:
             displayName: Body
             description: The body of the request.
             type: FlightStatusRequest
-        headers:
-          Accept:
-            required: true
-            default: application/json
-            example:
-              value: application/json
-            displayName: Accept
-            description: It advertises which content type is able to understand.
-            type: string
-          Content-Type:
-            required: true
-            default: application/json
-            example:
-              value: application/json
-            displayName: Content-Type
-            description: It tells the client what the content type of the returned.
-            type: string
         responses:
           200:
             description: Success
@@ -784,23 +750,6 @@ types:
             displayName: Body
             description: The body of the request.
             type: NewMemberRequest
-        headers:
-          Accept:
-            required: true
-            default: application/json
-            example:
-              value: application/json
-            displayName: Accept
-            description: It advertises which content type is able to understand.
-            type: string
-          Content-Type:
-            required: true
-            default: application/json
-            example:
-              value: application/json
-            displayName: Content-Type
-            description: It tells the client what the content type of the returned.
-            type: string
         responses:
           200:
             description: Success
@@ -810,7 +759,7 @@ types:
                   value:
                     status: ok
                     ffp_number: 12345678902
-                    card_type: basic
+                    tier_type: basic
                 displayName: response
                 type: NewMemberResponse
     /actions/search:
@@ -827,23 +776,6 @@ types:
             displayName: Body
             description: The body of the request.
             type: MemberSearchRequest
-        headers:
-          Accept:
-            required: true
-            default: application/json
-            example:
-              value: application/json
-            displayName: Accept
-            description: It advertises which content type is able to understand.
-            type: string
-          Content-Type:
-            required: true
-            default: application/json
-            example:
-              value: application/json
-            displayName: Content-Type
-            description: It tells the client what the content type of the returned.
-            type: string
         responses:
           200:
             description: Success
@@ -852,7 +784,7 @@ types:
                 example:
                   value:
                     status: ok
-                    card_type: red
+                    tier_type: tier1
                     base_miles: 5000
                     promo_miles: 100
                 displayName: response
